@@ -21,3 +21,4 @@ Route::post('/booking/{workshop:slug}', [BookingController::class, 'bookingStore
 
 Route::get('/booking/finished/{bookingTransaction}', [BookingController::class, 'bookingFinished'])->name('front.booking_finished');
 
+Route::post('/booking/store', [BookingController::class, 'store'])->name('front.booking.store');

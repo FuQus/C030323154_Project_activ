@@ -36,21 +36,29 @@ class BookingController extends Controller
         }
     }
 
-    public function payment ()
-    {
-        if (!$this->bookingService->isBookingSessionAvailable()) {
-            return redirect()->route('front.index');
-
-            }
-
-            $data = $this->bookingService->getBookingDetails();
-
-            if (!$data) {
-            return redirect()->route('front.index');
-            }
-
-            return view('booking.payment', $data);
+    public function payment()
+{
+    // Periksa apakah sesi booking tersedia
+    if (!$this->bookingService->isBookingSessionAvailable()) {
+        return redirect()->route('front.index')->with('error', 'Sesi booking tidak tersedia.');
     }
+
+    // Ambil detail booking dari service
+    $data = $this->bookingService->getBookingDetails();
+
+    // Validasi jika data booking kosong
+    if (!$data || empty($data)) {
+        return redirect()->route('front.index')->with('error', 'Detail booking tidak tersedia.');
+    }
+
+    // Validasi data pembayaran, misalnya total harga dan metode pembayaran
+    if (empty($data['payment']) || !isset($data['payment']['total_price'])) {
+        return redirect()->route('front.index')->with('error', 'Data pembayaran tidak valid.');
+    }
+
+    // Kirim data booking ke tampilan pembayaran
+    return view('booking.payment', compact('data'));
+}
 
     public function paymentStore(StorePaymentRequest $request)
     {
